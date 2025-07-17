@@ -9,17 +9,19 @@ security:
   - ApiKeyAuth: []
   - AppIdAuth: []
 tags:
+  - name: Product
+      description: Endpoint untuk melihat daftar produk digital
   - name: Order
     description: Semua endpoint terkait pemesanan dan inquiry
   - name: Payment
     description: Endpoint untuk pembayaran dan metode pembayaran
-  - name: Product
-    description: Endpoint untuk melihat daftar produk digital
             
 paths:
 
   /product/v1:
     get:
+      tags:
+            - Product
       summary: Get Product List API
       security:
         - ApiKeyAuth: []
@@ -256,7 +258,7 @@ paths:
   /v3/api/payment/invoice:
     post:
       tags:
-          - Payment
+        - Payment
       summary: Create Payment Invoice API
       security:
         - ApiKeyAuth: []
@@ -269,51 +271,81 @@ paths:
               type: object
               required:
                 - amount
+                - order_id
                 - payment_method
+                - items
               properties:
                 amount:
                   type: number
-                  example: 100000
-                payment_method:
-                  type: string
-                  description: |
-                    Payment method type. Possible values:
-                    - va: Virtual Account (e.g. BCA, BIR, Mandira, BSI)
-                    - ewallet: E-wallet (e.g. OVO, DANA, Guppy)
-                    - qris: QRIS payment method
-                  enum:
-                    - va
-                    - ewallet
-                    - qris
-                  example: va
-                msisdn:
-                  type: string
-                  description: Optional, customer phone number
-                invoice_duration:
-                  type: integer
-                  description: Optional, invoice validity duration in minutes
-                description:
-                  type: string
-                  description: Optional, payment description
+                  description: "The total amount for the payment"
+                  example: 1000
                 success_redirect_url:
                   type: string
                   format: uri
-                  description: Optional, redirect URL on success
+                  description: "The URL to redirect to after a successful payment"
+                  example: "http://{domain-client}/"
                 failure_redirect_url:
                   type: string
                   format: uri
-                  description: Optional, redirect URL on failure
-            examples:
-              sample-request:
-                summary: Contoh Request Payment Invoice
-                value:
-                  amount: 100000
-                  payment_method: va
-                  msisdn: "08123456789"
-                  invoice_duration: 60
-                  description: "Pembayaran tagihan"
-                  success_redirect_url: "https://example.com/success"
-                  failure_redirect_url: "https://example.com/fail"
+                  description: "The URL to redirect to if the payment fails"
+                  example: "http://{domain-client}/"
+                order_id:
+                  type: string
+                  description: "Unique order ID"
+                  example: "stage-{{id}}"
+                description:
+                  type: string
+                  description: "A brief description of the payment"
+                  example: "stage-{{$timestamp}}"
+                invoice_duration:
+                  type: integer
+                  description: "Invoice validity duration in minutes (optional)"
+                  example: 180
+                payment_method:
+                  type: string
+                  description: "The payment method used for the invoice"
+                  example: "SHOPEEPAY"
+                msisdn:
+                  type: string
+                  description: "The customer's phone number (optional)"
+                  example: "+628123123123"
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - name
+                      - quantity
+                      - price
+                    properties:
+                      name:
+                        type: string
+                        description: "Name of the item"
+                        example: "Total Tagihan"
+                      quantity:
+                        type: integer
+                        description: "Quantity of the item"
+                        example: 1
+                      price:
+                        type: number
+                        description: "Price of the item"
+                        example: 10000
+              examples:
+                sample-request:
+                  summary: "Contoh Request Payment Invoice"
+                  value:
+                    amount: 1000
+                    success_redirect_url: "http://{domain-client}/"
+                    failure_redirect_url: "http://{domain-client}/"
+                    order_id: "stage-{{id}}"
+                    description: "stage-{{$timestamp}}"
+                    invoice_duration: 180
+                    payment_method: "SHOPEEPAY"
+                    msisdn: "+628123123123"
+                    items:
+                      - name: "Total Tagihan"
+                        quantity: 1
+                        price: 10000
       responses:
         '200':
           description: Invoice Created Successfully

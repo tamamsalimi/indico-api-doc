@@ -31,40 +31,45 @@ paths:
           description: Product List
           content:
             application/json:
-              example:
-                products:
-                  - indico_product_id: alteragameTopUp292
-                    description: Game voucher TopUp 292
-                    price: 150000
-                    group: ""
-                    category: ""
-                    subcat: ""
-                    code: ""
-                    details:
-                      - description: Game TopUp
-                        type: ID
-                        field: [user_id, server_id, server_name]
-                        index: 0
-                    promo:
-                      type: fixed
-                      amount: 10000
-                    server_list: []
-                  - indico_product_id: BB0011BPJS01
-                    description: BPJS Kesehatan
-                    price: 1
-                    group: BILLS
-                    category: BPJS
-                    subcat: BPJS Kesehatan
-                    code: BPJS
-                    details:
-                      - description: BPJS Kesehatan
-                        type: ID
-                        field: [account_id, month]
-                        index: 0
-                    promo:
-                      type: fixed
-                      amount: 0
-                    server_list: []
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+              examples:
+                sample:
+                  summary: Contoh response produk
+                  value:
+                    products:
+                      - indico_product_id: alteragameTopUp292
+                        description: Game voucher TopUp 292
+                        price: 150000
+                        group: ""
+                        category: ""
+                        subcat: ""
+                        code: ""
+                        details:
+                          - description: Game TopUp
+                            type: ID
+                            field: [user_id, server_id, server_name]
+                            index: 0
+                        promo:
+                          type: fixed
+                          amount: 10000
+                        server_list: []
+                      - indico_product_id: BB0011BPJS01
+                        description: BPJS Kesehatan
+                        price: 1
+                        group: BILLS
+                        category: BPJS
+                        subcat: BPJS Kesehatan
+                        code: BPJS
+                        details:
+                          - description: BPJS Kesehatan
+                            type: ID
+                            field: [account_id, month]
+                            index: 0
+                        promo:
+                          type: fixed
+                          amount: 0
+                        server_list: []
 
   /inquiry/v1:
     post:
@@ -113,59 +118,81 @@ paths:
                             type: string
                           zone_id:
                             type: string
+            examples:
+              sample-request:
+                summary: Contoh Request Inquiry
+                value:
+                  indico_product_id: "DG0011MLBB31"
+                  callback_url: "https://mycallback.example.com/callback"
+                  data:
+                    - order_count: 1
+                      details:
+                        user_id: "1029384"
+                        zone_id: "111"
       responses:
         '200':
           description: Success
           content:
             application/json:
-              example:
-                status_code: INDOK1
-                status_desc: Inquiry Successfully Created
-                status: Success
-                order_id: 17072520MLBB038424
-                indico_product_id: DG0011MLBB31
-                order_details:
-                  - order_count: 1
-                    details:
-                      - description: MOBILE LEGEND 10 DIAMOND (ID)
-                        status: Success
-                        status_desc: Successfully Inquiry
-                        user_name: Coda test account
-                        user_id: "1029384"
-                        zone_id: "111"
-                timestamp: 2025-07-17T20:40:00.63261936+07:00
+              schema:
+                $ref: '#/components/schemas/InquirySuccessResponse'
+              examples:
+                sample:
+                  summary: Contoh Response Success
+                  value:
+                    status_code: INDOK1
+                    status_desc: Inquiry Successfully Created
+                    status: Success
+                    order_id: 17072520MLBB038424
+                    indico_product_id: DG0011MLBB31
+                    order_details:
+                      - order_count: 1
+                        details:
+                          - description: MOBILE LEGEND 10 DIAMOND (ID)
+                            status: Success
+                            status_desc: Successfully Inquiry
+                            user_name: Coda test account
+                            user_id: "1029384"
+                            zone_id: "111"
+                    timestamp: 2025-07-17T20:40:00.63261936+07:00
         '202':
           description: Invalid User (processed by channel)
           content:
             application/json:
-              example:
-                status_code: INDF102
-                status_desc: Invalid User
-                status: Failed
-                order_id: 17072520PUMO122555
-                indico_product_id: VG0011PUMO01
-                order_details:
-                  - order_count: 1
-                    details:
-                      - description: MOBILE LEGEND 10 DIAMOND
-                        status: Failed
-                        status_desc: Invalid User
-                        user_id: "1029383"
-                        zone_id: "111"
-                timestamp: 2025-07-17T20:41:55.751787362+07:00
+              examples:
+                sample:
+                  summary: Contoh Response Invalid User
+                  value:
+                    status_code: INDF102
+                    status_desc: Invalid User
+                    status: Failed
+                    order_id: 17072520PUMO122555
+                    indico_product_id: VG0011PUMO01
+                    order_details:
+                      - order_count: 1
+                        details:
+                          - description: MOBILE LEGEND 10 DIAMOND
+                            status: Failed
+                            status_desc: Invalid User
+                            user_id: "1029383"
+                            zone_id: "111"
+                    timestamp: 2025-07-17T20:41:55.751787362+07:00
         '400':
           description: Invalid Request Body
           content:
             application/json:
-              example:
-                status_code: IND001
-                status_desc: Invalid Request Body
-                status: Cancelled
-                timestamp: 0001-01-01T00:00:00Z
+              examples:
+                sample:
+                  summary: Contoh Response Invalid Request
+                  value:
+                    status_code: IND001
+                    status_desc: Invalid Request Body
+                    status: Cancelled
+                    timestamp: 0001-01-01T00:00:00Z
 
-  /mo/request:
+  /cp/v1/games:
     get:
-      summary: Get MO Request API (No headers required)
+      summary: Get MO Request API
       parameters:
         - in: query
           name: msisdn
@@ -211,6 +238,10 @@ paths:
               schema:
                 type: string
                 example: ok
+              examples:
+                sample:
+                  summary: Contoh Response MO Request Success
+                  value: ok
         '400':
           description: Invalid Parameters
           content:
@@ -218,6 +249,10 @@ paths:
               schema:
                 type: string
                 example: invalid params
+              examples:
+                sample:
+                  summary: Contoh Response Invalid Params
+                  value: invalid params
 
   /v3/api/payment/invoice:
     post:
@@ -259,7 +294,7 @@ paths:
                     - va
                     - ewallet
                     - qris
-                  example: BCA
+                  example: va
                 msisdn:
                   type: string
                   description: Optional, customer phone number
@@ -277,6 +312,17 @@ paths:
                   type: string
                   format: uri
                   description: Optional, redirect URL on failure
+            examples:
+              sample-request:
+                summary: Contoh Request Payment Invoice
+                value:
+                  amount: 100000
+                  payment_method: va
+                  msisdn: "08123456789"
+                  invoice_duration: 60
+                  description: "Pembayaran tagihan"
+                  success_redirect_url: "https://example.com/success"
+                  failure_redirect_url: "https://example.com/fail"
       responses:
         '200':
           description: Invoice Created Successfully
@@ -323,10 +369,12 @@ paths:
             application/json:
               examples:
                 amountMismatch:
+                  summary: Amount Mismatch Error
                   value:
                     error_message: Error Amount not match
                     expired_at: 0001-01-01T00:00:00Z
                 vaRequestError:
+                  summary: VA Request Error
                   value:
                     status: Error sending VA request
                     expired_at: 0001-01-01T00:00:00Z
@@ -366,35 +414,156 @@ paths:
           description: Payment Method List
           content:
             application/json:
-              example:
-                data:
-                  - payment_method_name: BJB
-                    payment_channel: VA
-                    payment_description: BJB VA
-                    fee_type: fixed_fee
-                    fixed_fee: 3500
-                    percentage_fee: 0
-                  - payment_method_name: DANA
-                    payment_channel: e-wallet
-                    payment_description: DANA
-                    fee_type: percentage_fee
-                    fixed_fee: 0
-                    percentage_fee: 2.73
-                  - payment_method_name: DANA
-                    payment_channel: e-wallet
-                    payment_description: DANA
-                    fee_type: percentage_fee
-                    fixed_fee: 0
-                    percentage_fee: 1.5
-                service_rate: 1000
-                pagination:
-                  page: 1
-                  limit: 10
-                  total_count: 10
-                  total_page: 2
+              schema:
+                $ref: '#/components/schemas/PaymentMethodListResponse'
+              examples:
+                sample:
+                  summary: Contoh Response Payment Methods
+                  value:
+                    data:
+                      - payment_method_name: BJB
+                        payment_channel: VA
+                        payment_description: BJB VA
+                        fee_type: fixed_fee
+                        fixed_fee: 3500
+                        percentage_fee: 0
+                      - payment_method_name: DANA
+                        payment_channel: e-wallet
+                        payment_description: DANA
+                        fee_type: percentage_fee
+                        fixed_fee: 0
+                        percentage_fee: 2.73
+                      - payment_method_name: OVO
+                        payment_channel: e-wallet
+                        payment_description: OVO
+                        fee_type: percentage_fee
+                        fixed_fee: 0
+                        percentage_fee: 1.5
+                    service_rate: 1000
+                    pagination:
+                      page: 1
+                      limit: 10
+                      total_count: 10
+                      total_page: 2
 
 components:
   schemas:
+    ProductListResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              indico_product_id:
+                type: string
+                example: alteragameTopUp292
+              description:
+                type: string
+                example: Game voucher TopUp 292
+              price:
+                type: number
+                example: 150000
+              group:
+                type: string
+                example: ""
+              category:
+                type: string
+                example: ""
+              subcat:
+                type: string
+                example: ""
+              code:
+                type: string
+                example: ""
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      example: Game TopUp
+                    type:
+                      type: string
+                      example: ID
+                    field:
+                      type: array
+                      items:
+                        type: string
+                      example: [user_id, server_id, server_name]
+                    index:
+                      type: integer
+                      example: 0
+              promo:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: fixed
+                  amount:
+                    type: number
+                    example: 10000
+              server_list:
+                type: array
+                items:
+                  type: object
+                example: []
+    InquirySuccessResponse:
+      type: object
+      properties:
+        status_code:
+          type: string
+          example: INDOK1
+        status_desc:
+          type: string
+          example: Inquiry Successfully Created
+        status:
+          type: string
+          example: Success
+        order_id:
+          type: string
+          example: 17072520MLBB038424
+        indico_product_id:
+          type: string
+          example: DG0011MLBB31
+        order_details:
+          type: array
+          items:
+            type: object
+            properties:
+              order_count:
+                type: integer
+                example: 1
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      example: MOBILE LEGEND 10 DIAMOND (ID)
+                    status:
+                      type: string
+                      example: Success
+                    status_desc:
+                      type: string
+                      example: Successfully Inquiry
+                    user_name:
+                      type: string
+                      example: Coda test account
+                    user_id:
+                      type: string
+                      example: "1029384"
+                    zone_id:
+                      type: string
+                      example: "111"
+        timestamp:
+          type: string
+          format: date-time
+          example: 2025-07-17T20:40:00.63261936+07:00
+
     VAResponse:
       type: object
       properties:
@@ -472,3 +641,48 @@ components:
               type: string
               format: uri
               example: "https://devo.finpay.id/pg/payment/card/v2/access/91f55d9fdb61defc69edb7f45bb203d06f47bc1c92f84a0057c36da959d700b0"
+
+    PaymentMethodListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              payment_method_name:
+                type: string
+                example: BJB
+              payment_channel:
+                type: string
+                example: VA
+              payment_description:
+                type: string
+                example: BJB VA
+              fee_type:
+                type: string
+                example: fixed_fee
+              fixed_fee:
+                type: number
+                example: 3500
+              percentage_fee:
+                type: number
+                example: 0
+        service_rate:
+          type: number
+          example: 1000
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              example: 1
+            limit:
+              type: integer
+              example: 10
+            total_count:
+              type: integer
+              example: 10
+            total_page:
+              type: integer
+              example: 2

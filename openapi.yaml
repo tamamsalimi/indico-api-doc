@@ -2,10 +2,7 @@ openapi: 3.0.3
 info:
   title: Indico Nirwana API Documentation
   version: 1.0.0
-  
-servers:
-  - url: https://api.example.com
-    description: Production server
+
 security:
   - ApiKeyAuth: []
   - AppIdAuth: []
@@ -27,6 +24,9 @@ paths:
       security:
         - ApiKeyAuth: []
         - AppIdAuth: []
+      servers:
+        - url: https://api-stage.indiana.co.id
+          description: Sandbox server   
       parameters:
         - name: product_id
           in: query
@@ -87,6 +87,9 @@ paths:
       security:
         - ApiKeyAuth: []
         - AppIdAuth: []
+      servers:
+        - url: https://api-stage.indiana.co.id
+          description: Sandbox server  
       requestBody:
         required: true
         content:
@@ -195,6 +198,9 @@ paths:
       tags:
           - Order
       summary: Get MO Request API
+      servers:
+        - url: https://api-stg.gamespad.net
+          description: Sandbox server
       parameters:
         - in: query
           name: msisdn
@@ -264,6 +270,9 @@ paths:
       security:
         - ApiKeyAuth: []
         - AppIdAuth: []
+      servers:
+        - url: https://api-stage.indiana.co.id
+          description: Sandbox server  
       requestBody:
         required: true
         content:
@@ -411,6 +420,9 @@ paths:
       security:
         - ApiKeyAuth: []
         - AppIdAuth: []
+      servers:
+        - url: https://api-stage.indiana.co.id
+          description: Sandbox server  
       parameters:
         - name: page
           in: query

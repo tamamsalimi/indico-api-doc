@@ -1,4 +1,41 @@
 <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>API Documentation</title>
+    <!-- Load Redoc standalone -->
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      header img {
+        height: 50px;
+        margin-right: 15px;
+      }
+      header h1 {
+        font-size: 1.8rem;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="indico.png" alt="Indico Logo" />
+      <h1>API Documentation</h1>
+    </header>
+
+    <!-- Redoc akan render dokumentasi OpenAPI di sini -->
+    <redoc spec-url="openapi.yaml"></redoc>
+  </body>
+</html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>API Documentation</title>
@@ -7,7 +44,7 @@
   </head>
   <body>
     <!-- Redoc akan render dokumentasi OpenAPI di sini -->
-    <redoc spec-url="openapi.yaml"></redoc>
+    <redoc spec-url="https://tamamsalimi.github.io/indico-api-doc/openapi.yaml"></redoc>
   </body>
 </html>
 

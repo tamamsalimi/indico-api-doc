@@ -49,10 +49,10 @@ paths:
                       - indico_product_id: alteragameTopUp292
                         description: Game voucher TopUp 292
                         price: 150000
-                        group: ""
-                        category: ""
-                        subcat: ""
-                        code: ""
+                        group: Game TopUp
+                        category: Game TopUp
+                        subcat: Game TopUp
+                        code: Game TopUp
                         details:
                           - description: Game TopUp
                             type: ID
@@ -62,22 +62,22 @@ paths:
                           type: fixed
                           amount: 10000
                         server_list: []
-                      - indico_product_id: BB0011BPJS01
-                        description: BPJS Kesehatan
+                      - indico_product_id: FFGS200205
+                        description: Free Fire
                         price: 1
-                        group: BILLS
-                        category: BPJS
-                        subcat: BPJS Kesehatan
-                        code: BPJS
+                        group: Game TopUp
+                        category: Game TopUp
+                        subcat: Game TopUp
+                        code: Game TopUp
                         details:
-                          - description: BPJS Kesehatan
+                          - description: Free Fire 20 DIAMOND
                             type: ID
-                            field: [account_id, month]
+                            field: [user_id, server_ip]
                             index: 0
                         promo:
                           type: fixed
                           amount: 0
-                        server_list: []
+                        server_list: ['10.2.7.1']
 
   /inquiry/v1:
     post:
@@ -207,13 +207,13 @@ paths:
           schema:
             type: string
           required: true
-          description: User phone number, e.g. 08979898989
+          description: User encrypted msisnd get from telkomsel chanel, e.g. HHY-QEEERERERXXXX
         - in: query
           name: sms
           schema:
             type: string
           required: true
-          description: SMS content, e.g. UMBTESTVOUCHER
+          description: SMS content, e.g. UDGMLL50K
         - in: query
           name: adn
           schema:
@@ -224,13 +224,13 @@ paths:
           name: http_segment_number
           schema:
             type: integer
-          required: true
+          required: false
           description: Segment number, e.g. 1
         - in: query
           name: http_segment_count
           schema:
             type: integer
-          required: true
+          required: false
           description: Total segment count, e.g. 2
         - in: query
           name: trx_id

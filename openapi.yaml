@@ -262,7 +262,7 @@ paths:
                   summary: Contoh Response Invalid Params
                   value: invalid params
 
-  /v3/api/payment/invoice:
+  /pgind/v1/invoice:
     post:
       tags:
         - Payment
@@ -271,7 +271,7 @@ paths:
         - ApiKeyAuth: []
         - AppIdAuth: []
       servers:
-        - url: https://api-stage.indiana.co.id
+        - url: https://pgind-dev.indicocompany.technology
           description: Sandbox server  
       requestBody:
         required: true
@@ -373,7 +373,7 @@ paths:
                     order_id: "stage-krby5rym"
                     status: "SUCCESS"
                     expired_at: "2025-07-17T13:49:31.529Z"
-                    payment_id: "3b8c74a9-93f9-44ba-80c1-ae1aa7f57512"
+                    refrence_id: "3b8c74a9-93f9-44ba-80c1-ae1aa7f57512"
                     payment_detail:
                       virtual_account: "132819999563447"
                 Ewallet:
@@ -383,7 +383,7 @@ paths:
                     invoice_url: "https://app.uat.shopeepay.co.id/u/pay_checkout?"
                     status: "SUCCESS"
                     expired_at: "2025-07-18T20:45:50+07:00"
-                    payment_id: "stage-iwf69nwp"
+                    refrence_id: "stage-iwf69nwp"
                     payment_detail:
                       desktop_web_checkout_url: "https://app.uat.shopeepay.co.id/u/pay_checkout"
                 QRIS:
@@ -393,7 +393,7 @@ paths:
                     status: "SUCCESS"
                     qr_code: "/u7eRoySpZIZVJGQDjI9BX1nXzhrPjXwSPhfG+j3UEPjj7JbF72CzkiuzPlPPY3GwEsR5m5t3zZPJzz0/w7"
                     expired_at: "2025-07-18T20:46:47+07:00"
-                    payment_id: "stage-qsule8c1"
+                    refrence_id: "stage-qsule8c1"
                     payment_detail:
                       qr_checkout_string: "https://devo.finpay.id/pg/payment/card/v2/access/91f55d9fdb61defc69edb7f45bb203d06f47bc1c92f84a0057c36da959d700b0"
         '400':
@@ -412,7 +412,7 @@ paths:
                     status: Error sending VA request
                     expired_at: 0001-01-01T00:00:00Z
 
-  /v3/api/payment/methods:
+  /pgind/v1/payment/methods:
     get:
       tags:
           - Payment
@@ -421,7 +421,7 @@ paths:
         - ApiKeyAuth: []
         - AppIdAuth: []
       servers:
-        - url: https://api-stage.indiana.co.id
+        - url: https://pgind-dev.indicocompany.technology
           description: Sandbox server  
       parameters:
         - name: page
@@ -615,7 +615,7 @@ components:
           type: string
           format: date-time
           example: "2025-07-17T13:49:31.529Z"
-        payment_id:
+        refrence_id:
           type: string
           example: 3b8c74a9-93f9-44ba-80c1-ae1aa7f57512
         payment_detail:
@@ -642,7 +642,7 @@ components:
           type: string
           format: date-time
           example: "2025-07-18T20:45:50+07:00"
-        payment_id:
+        refrence_id:
           type: string
           example: stage-iwf69nwp
         payment_detail:
@@ -669,7 +669,7 @@ components:
           type: string
           format: date-time
           example: "2025-07-18T20:46:47+07:00"
-        payment_id:
+        refrence_id:
           type: string
           example: stage-qsule8c1
         payment_detail:

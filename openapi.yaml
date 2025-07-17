@@ -1,7 +1,8 @@
 openapi: 3.0.3
 info:
-  title: API Documentation
+  title: Indico Nirwana API Documentation
   version: 1.0.0
+  
 servers:
   - url: https://api.example.com
     description: Production server

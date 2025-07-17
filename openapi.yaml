@@ -10,7 +10,7 @@ security:
   - AppIdAuth: []
 tags:
   - name: Product
-      description: Endpoint untuk melihat daftar produk digital
+    description: Endpoint untuk melihat daftar produk digital
   - name: Order
     description: Semua endpoint terkait pemesanan dan inquiry
   - name: Payment

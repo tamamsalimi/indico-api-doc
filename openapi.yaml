@@ -2,26 +2,31 @@ openapi: 3.0.3
 info:
   title: API Documentation
   version: 1.0.0
+servers:
+  - url: https://api.example.com
+    description: Production server
+security:
+  - ApiKeyAuth: []
+  - AppIdAuth: []
+tags:
+  - name: Order
+    description: Semua endpoint terkait pemesanan dan inquiry
+  - name: Payment
+    description: Endpoint untuk pembayaran dan metode pembayaran
+  - name: Product
+    description: Endpoint untuk melihat daftar produk digital
+            
 paths:
 
   /product/v1:
     get:
       summary: Get Product List API
+      security:
+        - ApiKeyAuth: []
+        - AppIdAuth: []
       parameters:
-        - in: header
-          name: application-id
-          schema:
-            type: string
-          required: true
-          description: Client Application ID
-        - in: header
-          name: api-key
-          schema:
-            type: string
-          required: true
-          description: Client API Key
-        - in: query
-          name: product_id
+        - name: product_id
+          in: query
           schema:
             type: string
           required: false
@@ -73,20 +78,12 @@ paths:
 
   /inquiry/v1:
     post:
+      tags:
+          - Order
       summary: Create Order Inquiry API
-      parameters:
-        - in: header
-          name: application-id
-          schema:
-            type: string
-          required: true
-          description: Client Application ID
-        - in: header
-          name: api-key
-          schema:
-            type: string
-          required: true
-          description: Client API Key
+      security:
+        - ApiKeyAuth: []
+        - AppIdAuth: []
       requestBody:
         required: true
         content:
@@ -192,6 +189,8 @@ paths:
 
   /cp/v1/games:
     get:
+      tags:
+          - Order
       summary: Get MO Request API
       parameters:
         - in: query
@@ -256,20 +255,12 @@ paths:
 
   /v3/api/payment/invoice:
     post:
+      tags:
+          - Payment
       summary: Create Payment Invoice API
-      parameters:
-        - in: header
-          name: application-id
-          schema:
-            type: string
-          required: true
-          description: Client Application ID
-        - in: header
-          name: api-key
-          schema:
-            type: string
-          required: true
-          description: Client API Key
+      security:
+        - ApiKeyAuth: []
+        - AppIdAuth: []
       requestBody:
         required: true
         content:
@@ -381,29 +372,22 @@ paths:
 
   /v3/api/payment/methods:
     get:
+      tags:
+          - Payment
       summary: Get Payment Method API
+      security:
+        - ApiKeyAuth: []
+        - AppIdAuth: []
       parameters:
-        - in: header
-          name: application-id
-          schema:
-            type: string
-          required: true
-          description: Client Application ID
-        - in: header
-          name: api-key
-          schema:
-            type: string
-          required: true
-          description: Client API Key
-        - in: query
-          name: page
+        - name: page
+          in: query
           schema:
             type: integer
             default: 1
           required: false
           description: Page number for pagination
-        - in: query
-          name: limit
+        - name: limit
+          in: query
           schema:
             type: integer
             default: 10
@@ -447,6 +431,15 @@ paths:
                       total_page: 2
 
 components:
+  securitySchemes:
+      ApiKeyAuth:
+        type: apiKey
+        in: header
+        name: api-key
+      AppIdAuth:
+        type: apiKey
+        in: header
+        name: application-id
   schemas:
     ProductListResponse:
       type: object

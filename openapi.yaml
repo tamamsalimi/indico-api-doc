@@ -3,9 +3,7 @@ info:
   title: Indico Nirwana API Documentation
   version: 1.0.0
 
-security:
-  - ApiKeyAuth: []
-  - AppIdAuth: []
+
 tags:
   - name: Product
     description: Endpoint untuk melihat daftar produk digital
@@ -262,7 +260,7 @@ paths:
                   summary: Contoh Response Invalid Params
                   value: invalid params
 
-  /pgind/v1/invoice:
+  /v3/payment/invoice:
     post:
       tags:
         - Payment
@@ -271,7 +269,7 @@ paths:
         - ApiKeyAuth: []
         - AppIdAuth: []
       servers:
-        - url: https://pgind-dev.indicocompany.technology
+        - url: https://api-stage.indiana.co.id
           description: Sandbox server  
       requestBody:
         required: true
@@ -412,7 +410,7 @@ paths:
                     status: Error sending VA request
                     expired_at: 0001-01-01T00:00:00Z
 
-  /pgind/v1/payment/methods:
+  /v3/payment/methods:
     get:
       tags:
           - Payment
@@ -421,7 +419,7 @@ paths:
         - ApiKeyAuth: []
         - AppIdAuth: []
       servers:
-        - url: https://pgind-dev.indicocompany.technology
+        - url: https://api-stage.indiana.co.id
           description: Sandbox server  
       parameters:
         - name: page

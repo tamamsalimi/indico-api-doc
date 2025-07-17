@@ -21,7 +21,7 @@ paths:
   /product/v1:
     get:
       tags:
-            - Product
+          - Product
       summary: Get Product List API
       security:
         - ApiKeyAuth: []

@@ -6,14 +6,20 @@ paths:
 
   /product/v1:
     get:
-      summary: Get Product List
+      summary: Get Product List API
       parameters:
         - in: header
-          name: X-API-Key
+          name: application-id
           schema:
             type: string
-          required: false
-          description: API key header (optional)
+          required: true
+          description: Client Application ID
+        - in: header
+          name: api-key
+          schema:
+            type: string
+          required: true
+          description: Client API Key
         - in: query
           name: product_id
           schema:
@@ -62,14 +68,20 @@ paths:
 
   /inquiry/v1:
     post:
-      summary: Inquiry API
+      summary: Create Order Inquiry API
       parameters:
         - in: header
-          name: X-API-Key
+          name: application-id
           schema:
             type: string
-          required: false
-          description: API key header (optional)
+          required: true
+          description: Client Application ID
+        - in: header
+          name: api-key
+          schema:
+            type: string
+          required: true
+          description: Client API Key
       requestBody:
         required: true
         content:
@@ -117,7 +129,7 @@ paths:
                     details:
                       - description: MOBILE LEGEND 10 DIAMOND (ID)
                         status: Success
-                        status_desc: Content has been fulfilled
+                        status_desc: Successfully Inquiry
                         user_name: Coda test account
                         user_id: "1029384"
                         zone_id: "111"
@@ -152,58 +164,77 @@ paths:
                 timestamp: 0001-01-01T00:00:00Z
 
   /mo/request:
-    post:
-      summary: MO Request API
+    get:
+      summary: Get MO Request API (No headers required)
       parameters:
-        - in: header
-          name: X-API-Key
+        - in: query
+          name: msisdn
           schema:
             type: string
-          required: false
-          description: API key header (optional)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - user_id
-                - product_id
-              properties:
-                user_id:
-                  type: string
-                product_id:
-                  type: string
+          required: true
+          description: User phone number, e.g. 08979898989
+        - in: query
+          name: sms
+          schema:
+            type: string
+          required: true
+          description: SMS content, e.g. UMBTESTVOUCHER
+        - in: query
+          name: adn
+          schema:
+            type: string
+          required: true
+          description: ADN code, e.g. 3230
+        - in: query
+          name: http_segment_number
+          schema:
+            type: integer
+          required: true
+          description: Segment number, e.g. 1
+        - in: query
+          name: http_segment_count
+          schema:
+            type: integer
+          required: true
+          description: Total segment count, e.g. 2
+        - in: query
+          name: trx_id
+          schema:
+            type: string
+          required: true
+          description: Transaction ID, e.g. 251130142638010030
       responses:
         '200':
           description: MO Request Success
           content:
-            application/json:
-              example:
-                status: Success
-                mo_id: MO123456789
-                timestamp: 2025-07-17T21:10:00+07:00
+            text/plain:
+              schema:
+                type: string
+                example: ok
         '400':
           description: Invalid Parameters
           content:
-            application/json:
-              example:
-                status_code: IND002
-                status_desc: Missing or invalid parameters
-                status: Failed
-                timestamp: 2025-07-17T21:00:00+07:00
+            text/plain:
+              schema:
+                type: string
+                example: invalid params
 
   /v3/api/payment/invoice:
     post:
-      summary: Create Payment Invoice
+      summary: Create Payment Invoice API
       parameters:
         - in: header
-          name: X-API-Key
+          name: application-id
           schema:
             type: string
-          required: false
-          description: API key header (optional)
+          required: true
+          description: Client Application ID
+        - in: header
+          name: api-key
+          schema:
+            type: string
+          required: true
+          description: Client API Key
       requestBody:
         required: true
         content:
@@ -216,34 +247,76 @@ paths:
               properties:
                 amount:
                   type: number
+                  example: 100000
                 payment_method:
                   type: string
+                  description: |
+                    Payment method type. Possible values:
+                    - va: Virtual Account (e.g. BCA, BIR, Mandira, BSI)
+                    - ewallet: E-wallet (e.g. OVO, DANA, Guppy)
+                    - qris: QRIS payment method
+                  enum:
+                    - va
+                    - ewallet
+                    - qris
+                  example: BCA
                 msisdn:
                   type: string
-                  description: Optional
+                  description: Optional, customer phone number
                 invoice_duration:
                   type: integer
-                  description: Optional
+                  description: Optional, invoice validity duration in minutes
                 description:
                   type: string
-                  description: Optional
+                  description: Optional, payment description
                 success_redirect_url:
                   type: string
                   format: uri
-                  description: Optional
+                  description: Optional, redirect URL on success
                 failure_redirect_url:
                   type: string
                   format: uri
-                  description: Optional
+                  description: Optional, redirect URL on failure
       responses:
         '200':
-          description: Invoice Created
+          description: Invoice Created Successfully
           content:
             application/json:
-              example:
-                status: Success
-                invoice_id: INV123456
-                expired_at: 2025-07-18T00:00:00Z
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/VAResponse'
+                  - $ref: '#/components/schemas/EwalletResponse'
+                  - $ref: '#/components/schemas/QRISResponse'
+              examples:
+                VA:
+                  summary: Virtual Account Response
+                  value:
+                    order_id: "stage-krby5rym"
+                    status: "SUCCESS"
+                    expired_at: "2025-07-17T13:49:31.529Z"
+                    payment_id: "3b8c74a9-93f9-44ba-80c1-ae1aa7f57512"
+                    payment_detail:
+                      virtual_account: "132819999563447"
+                Ewallet:
+                  summary: Ewallet Response
+                  value:
+                    order_id: "stage-iwf69nwp"
+                    invoice_url: "https://app.uat.shopeepay.co.id/u/pay_checkout?"
+                    status: "SUCCESS"
+                    expired_at: "2025-07-18T20:45:50+07:00"
+                    payment_id: "stage-iwf69nwp"
+                    payment_detail:
+                      desktop_web_checkout_url: "https://app.uat.shopeepay.co.id/u/pay_checkout"
+                QRIS:
+                  summary: QRIS Response
+                  value:
+                    order_id: "stage-qsule8c1"
+                    status: "SUCCESS"
+                    qr_code: "/u7eRoySpZIZVJGQDjI9BX1nXzhrPjXwSPhfG+j3UEPjj7JbF72CzkiuzPlPPY3GwEsR5m5t3zZPJzz0/w7"
+                    expired_at: "2025-07-18T20:46:47+07:00"
+                    payment_id: "stage-qsule8c1"
+                    payment_detail:
+                      qr_checkout_string: "https://devo.finpay.id/pg/payment/card/v2/access/91f55d9fdb61defc69edb7f45bb203d06f47bc1c92f84a0057c36da959d700b0"
         '400':
           description: Bad Request
           content:
@@ -255,7 +328,7 @@ paths:
                     expired_at: 0001-01-01T00:00:00Z
                 vaRequestError:
                   value:
-                    status: Error sending  VA request
+                    status: Error sending VA request
                     expired_at: 0001-01-01T00:00:00Z
 
   /v3/api/payment/methods:
@@ -263,11 +336,17 @@ paths:
       summary: Get Payment Method API
       parameters:
         - in: header
-          name: X-API-Key
+          name: application-id
           schema:
             type: string
-          required: false
-          description: API key header (optional)
+          required: true
+          description: Client Application ID
+        - in: header
+          name: api-key
+          schema:
+            type: string
+          required: true
+          description: Client API Key
         - in: query
           name: page
           schema:
@@ -314,3 +393,82 @@ paths:
                   total_count: 10
                   total_page: 2
 
+components:
+  schemas:
+    VAResponse:
+      type: object
+      properties:
+        order_id:
+          type: string
+          example: stage-krby5rym
+        status:
+          type: string
+          example: SUCCESS
+        expired_at:
+          type: string
+          format: date-time
+          example: "2025-07-17T13:49:31.529Z"
+        payment_id:
+          type: string
+          example: 3b8c74a9-93f9-44ba-80c1-ae1aa7f57512
+        payment_detail:
+          type: object
+          properties:
+            virtual_account:
+              type: string
+              example: "132819999563447"
+
+    EwalletResponse:
+      type: object
+      properties:
+        order_id:
+          type: string
+          example: stage-iwf69nwp
+        invoice_url:
+          type: string
+          format: uri
+          example: "https://app.uat.shopeepay.co.id/u/pay_checkout?"
+        status:
+          type: string
+          example: SUCCESS
+        expired_at:
+          type: string
+          format: date-time
+          example: "2025-07-18T20:45:50+07:00"
+        payment_id:
+          type: string
+          example: stage-iwf69nwp
+        payment_detail:
+          type: object
+          properties:
+            desktop_web_checkout_url:
+              type: string
+              format: uri
+              example: "https://app.uat.shopeepay.co.id/u/pay_checkout"
+
+    QRISResponse:
+      type: object
+      properties:
+        order_id:
+          type: string
+          example: stage-qsule8c1
+        status:
+          type: string
+          example: SUCCESS
+        qr_code:
+          type: string
+          example: "/u7eRoySpZIZVJGQDjI9BX1nXzhrPjXwSPhfG+j3UEPjj7JbF72CzkiuzPlPPY3GwEsR5m5t3zZPJzz0/w7"
+        expired_at:
+          type: string
+          format: date-time
+          example: "2025-07-18T20:46:47+07:00"
+        payment_id:
+          type: string
+          example: stage-qsule8c1
+        payment_detail:
+          type: object
+          properties:
+            qr_checkout_string:
+              type: string
+              format: uri
+              example: "https://devo.finpay.id/pg/payment/card/v2/access/91f55d9fdb61defc69edb7f45bb203d06f47bc1c92f84a0057c36da959d700b0"

@@ -1,0 +1,316 @@
+openapi: 3.0.3
+info:
+  title: API Documentation
+  version: 1.0.0
+paths:
+
+  /product/v1:
+    get:
+      summary: Get Product List
+      parameters:
+        - in: header
+          name: X-API-Key
+          schema:
+            type: string
+          required: false
+          description: API key header (optional)
+        - in: query
+          name: product_id
+          schema:
+            type: string
+          required: false
+          description: Optional product ID filter, e.g. DT0011TSDP15
+      responses:
+        '200':
+          description: Product List
+          content:
+            application/json:
+              example:
+                products:
+                  - indico_product_id: alteragameTopUp292
+                    description: Game voucher TopUp 292
+                    price: 150000
+                    group: ""
+                    category: ""
+                    subcat: ""
+                    code: ""
+                    details:
+                      - description: Game TopUp
+                        type: ID
+                        field: [user_id, server_id, server_name]
+                        index: 0
+                    promo:
+                      type: fixed
+                      amount: 10000
+                    server_list: []
+                  - indico_product_id: BB0011BPJS01
+                    description: BPJS Kesehatan
+                    price: 1
+                    group: BILLS
+                    category: BPJS
+                    subcat: BPJS Kesehatan
+                    code: BPJS
+                    details:
+                      - description: BPJS Kesehatan
+                        type: ID
+                        field: [account_id, month]
+                        index: 0
+                    promo:
+                      type: fixed
+                      amount: 0
+                    server_list: []
+
+  /inquiry/v1:
+    post:
+      summary: Inquiry API
+      parameters:
+        - in: header
+          name: X-API-Key
+          schema:
+            type: string
+          required: false
+          description: API key header (optional)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - indico_product_id
+                - callback_url
+                - data
+              properties:
+                indico_product_id:
+                  type: string
+                callback_url:
+                  type: string
+                  format: uri
+                data:
+                  type: array
+                  items:
+                    type: object
+                    required: [order_count]
+                    properties:
+                      order_count:
+                        type: integer
+                      details:
+                        type: object
+                        properties:
+                          user_id:
+                            type: string
+                          zone_id:
+                            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                status_code: INDOK1
+                status_desc: Inquiry Successfully Created
+                status: Success
+                order_id: 17072520MLBB038424
+                indico_product_id: DG0011MLBB31
+                order_details:
+                  - order_count: 1
+                    details:
+                      - description: MOBILE LEGEND 10 DIAMOND (ID)
+                        status: Success
+                        status_desc: Content has been fulfilled
+                        user_name: Coda test account
+                        user_id: "1029384"
+                        zone_id: "111"
+                timestamp: 2025-07-17T20:40:00.63261936+07:00
+        '202':
+          description: Invalid User (processed by channel)
+          content:
+            application/json:
+              example:
+                status_code: INDF102
+                status_desc: Invalid User
+                status: Failed
+                order_id: 17072520PUMO122555
+                indico_product_id: VG0011PUMO01
+                order_details:
+                  - order_count: 1
+                    details:
+                      - description: MOBILE LEGEND 10 DIAMOND
+                        status: Failed
+                        status_desc: Invalid User
+                        user_id: "1029383"
+                        zone_id: "111"
+                timestamp: 2025-07-17T20:41:55.751787362+07:00
+        '400':
+          description: Invalid Request Body
+          content:
+            application/json:
+              example:
+                status_code: IND001
+                status_desc: Invalid Request Body
+                status: Cancelled
+                timestamp: 0001-01-01T00:00:00Z
+
+  /mo/request:
+    post:
+      summary: MO Request API
+      parameters:
+        - in: header
+          name: X-API-Key
+          schema:
+            type: string
+          required: false
+          description: API key header (optional)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - product_id
+              properties:
+                user_id:
+                  type: string
+                product_id:
+                  type: string
+      responses:
+        '200':
+          description: MO Request Success
+          content:
+            application/json:
+              example:
+                status: Success
+                mo_id: MO123456789
+                timestamp: 2025-07-17T21:10:00+07:00
+        '400':
+          description: Invalid Parameters
+          content:
+            application/json:
+              example:
+                status_code: IND002
+                status_desc: Missing or invalid parameters
+                status: Failed
+                timestamp: 2025-07-17T21:00:00+07:00
+
+  /v3/api/payment/invoice:
+    post:
+      summary: Create Payment Invoice
+      parameters:
+        - in: header
+          name: X-API-Key
+          schema:
+            type: string
+          required: false
+          description: API key header (optional)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - payment_method
+              properties:
+                amount:
+                  type: number
+                payment_method:
+                  type: string
+                msisdn:
+                  type: string
+                  description: Optional
+                invoice_duration:
+                  type: integer
+                  description: Optional
+                description:
+                  type: string
+                  description: Optional
+                success_redirect_url:
+                  type: string
+                  format: uri
+                  description: Optional
+                failure_redirect_url:
+                  type: string
+                  format: uri
+                  description: Optional
+      responses:
+        '200':
+          description: Invoice Created
+          content:
+            application/json:
+              example:
+                status: Success
+                invoice_id: INV123456
+                expired_at: 2025-07-18T00:00:00Z
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                amountMismatch:
+                  value:
+                    error_message: Error Amount not match
+                    expired_at: 0001-01-01T00:00:00Z
+                vaRequestError:
+                  value:
+                    status: Error sending  VA request
+                    expired_at: 0001-01-01T00:00:00Z
+
+  /v3/api/payment/methods:
+    get:
+      summary: Get Payment Method API
+      parameters:
+        - in: header
+          name: X-API-Key
+          schema:
+            type: string
+          required: false
+          description: API key header (optional)
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          required: false
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          required: false
+          description: Limit number of records per page
+      responses:
+        '200':
+          description: Payment Method List
+          content:
+            application/json:
+              example:
+                data:
+                  - payment_method_name: BJB
+                    payment_channel: VA
+                    payment_description: BJB VA
+                    fee_type: fixed_fee
+                    fixed_fee: 3500
+                    percentage_fee: 0
+                  - payment_method_name: DANA
+                    payment_channel: e-wallet
+                    payment_description: DANA
+                    fee_type: percentage_fee
+                    fixed_fee: 0
+                    percentage_fee: 2.73
+                  - payment_method_name: DANA
+                    payment_channel: e-wallet
+                    payment_description: DANA
+                    fee_type: percentage_fee
+                    fixed_fee: 0
+                    percentage_fee: 1.5
+                service_rate: 1000
+                pagination:
+                  page: 1
+                  limit: 10
+                  total_count: 10
+                  total_page: 2
+

@@ -1,0 +1,1025 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Indico Nirwana API Documentation",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Product",
+      "description": "Endpoint untuk melihat daftar produk digital"
+    },
+    {
+      "name": "Order",
+      "description": "Semua endpoint terkait pemesanan dan inquiry"
+    },
+    {
+      "name": "Payment",
+      "description": "Endpoint untuk pembayaran dan metode pembayaran"
+    }
+  ],
+  "paths": {
+    "/product/v1": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "Get Product List API",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "description": "Optional product ID filter, e.g. DT0011TSDP15",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product List",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductListResponse"
+                },
+                "examples": {
+                  "sample": {
+                    "summary": "Contoh response produk",
+                    "value": {
+                      "products": [
+                        {
+                          "indico_product_id": "alteragameTopUp292",
+                          "description": "Game voucher TopUp 292",
+                          "price": 150000,
+                          "group": "Game TopUp",
+                          "category": "Game TopUp",
+                          "subcat": "Game TopUp",
+                          "code": "Game TopUp",
+                          "details": [
+                            {
+                              "description": "Game TopUp",
+                              "type": "ID",
+                              "field": [
+                                "user_id",
+                                "server_id",
+                                "server_name"
+                              ],
+                              "index": 0
+                            }
+                          ],
+                          "promo": {
+                            "type": "fixed",
+                            "amount": 10000
+                          },
+                          "server_list": []
+                        },
+                        {
+                          "indico_product_id": "FFGS200205",
+                          "description": "Free Fire",
+                          "price": 1,
+                          "group": "Game TopUp",
+                          "category": "Game TopUp",
+                          "subcat": "Game TopUp",
+                          "code": "Game TopUp",
+                          "details": [
+                            {
+                              "description": "Free Fire 20 DIAMOND",
+                              "type": "ID",
+                              "field": [
+                                "user_id",
+                                "server_ip"
+                              ],
+                              "index": 0
+                            }
+                          ],
+                          "promo": {
+                            "type": "fixed",
+                            "amount": 0
+                          },
+                          "server_list": [
+                            "10.2.7.1"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          },
+          {
+            "AppIdAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api-stage.indiana.co.id",
+            "description": "Sandbox server"
+          }
+        ]
+      }
+    },
+    "/inquiry/v1": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Create Order Inquiry API",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inquiry_v1_body"
+              },
+              "examples": {
+                "sample-request": {
+                  "summary": "Contoh Request Inquiry",
+                  "value": {
+                    "indico_product_id": "DG0011MLBB31",
+                    "callback_url": "https://mycallback.example.com/callback",
+                    "data": [
+                      {
+                        "order_count": 1,
+                        "details": {
+                          "user_id": "1029384",
+                          "zone_id": "111"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InquirySuccessResponse"
+                },
+                "examples": {
+                  "sample": {
+                    "summary": "Contoh Response Success",
+                    "value": {
+                      "status_code": "INDOK1",
+                      "status_desc": "Inquiry Successfully Created",
+                      "status": "Success",
+                      "order_id": "17072520MLBB038424",
+                      "indico_product_id": "DG0011MLBB31",
+                      "order_details": [
+                        {
+                          "order_count": 1,
+                          "details": [
+                            {
+                              "description": "MOBILE LEGEND 10 DIAMOND (ID)",
+                              "status": "Success",
+                              "status_desc": "Successfully Inquiry",
+                              "user_name": "Coda test account",
+                              "user_id": "1029384",
+                              "zone_id": "111"
+                            }
+                          ]
+                        }
+                      ],
+                      "timestamp": "2025-07-17T13:40:00.632Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Invalid User (processed by channel)",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample": {
+                    "summary": "Contoh Response Invalid User",
+                    "value": {
+                      "status_code": "INDF102",
+                      "status_desc": "Invalid User",
+                      "status": "Failed",
+                      "order_id": "17072520PUMO122555",
+                      "indico_product_id": "VG0011PUMO01",
+                      "order_details": [
+                        {
+                          "order_count": 1,
+                          "details": [
+                            {
+                              "description": "MOBILE LEGEND 10 DIAMOND",
+                              "status": "Failed",
+                              "status_desc": "Invalid User",
+                              "user_id": "1029383",
+                              "zone_id": "111"
+                            }
+                          ]
+                        }
+                      ],
+                      "timestamp": "2025-07-17T13:41:55.751Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request Body",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "sample": {
+                    "summary": "Contoh Response Invalid Request",
+                    "value": {
+                      "status_code": "IND001",
+                      "status_desc": "Invalid Request Body",
+                      "status": "Cancelled",
+                      "timestamp": "1901-01-01T00:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          },
+          {
+            "AppIdAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api-stage.indiana.co.id",
+            "description": "Sandbox server"
+          }
+        ]
+      }
+    },
+    "/v3/payment/invoice": {
+      "post": {
+        "tags": [
+          "Payment"
+        ],
+        "summary": "Create Payment Invoice API",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/payment_invoice_body"
+              },
+              "examples": {
+                "sample-request": {
+                  "summary": "Contoh Request Payment Invoice",
+                  "value": {
+                    "amount": 1000,
+                    "success_redirect_url": "http://{domain-client}/",
+                    "failure_redirect_url": "http://{domain-client}/",
+                    "order_id": "stage-{{id}}",
+                    "description": "stage-{{$timestamp}}",
+                    "invoice_duration": 180,
+                    "payment_method": "SHOPEEPAY",
+                    "msisdn": "+628123123123",
+                    "items": [
+                      {
+                        "name": "Total Tagihan",
+                        "quantity": 1,
+                        "price": 10000
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Invoice Created Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                },
+                "examples": {
+                  "VA": {
+                    "summary": "Virtual Account Response",
+                    "value": {
+                      "order_id": "stage-krby5rym",
+                      "status": "SUCCESS",
+                      "expired_at": "2025-07-17T13:49:31.529Z",
+                      "refrence_id": "3b8c74a9-93f9-44ba-80c1-ae1aa7f57512",
+                      "payment_detail": {
+                        "virtual_account": "132819999563447"
+                      }
+                    }
+                  },
+                  "Ewallet": {
+                    "summary": "Ewallet Response",
+                    "value": {
+                      "order_id": "stage-iwf69nwp",
+                      "invoice_url": "https://app.uat.shopeepay.co.id/u/pay_checkout?",
+                      "status": "SUCCESS",
+                      "expired_at": "2025-07-18T20:45:50+07:00",
+                      "refrence_id": "stage-iwf69nwp",
+                      "payment_detail": {
+                        "desktop_web_checkout_url": "https://app.uat.shopeepay.co.id/u/pay_checkout"
+                      }
+                    }
+                  },
+                  "QRIS": {
+                    "summary": "QRIS Response",
+                    "value": {
+                      "order_id": "stage-qsule8c1",
+                      "status": "SUCCESS",
+                      "qr_code": "/u7eRoySpZIZVJGQDjI9BX1nXzhrPjXwSPhfG+j3UEPjj7JbF72CzkiuzPlPPY3GwEsR5m5t3zZPJzz0/w7",
+                      "expired_at": "2025-07-18T20:46:47+07:00",
+                      "refrence_id": "stage-qsule8c1",
+                      "payment_detail": {
+                        "qr_checkout_string": "https://devo.finpay.id/pg/payment/card/v2/access/91f55d9fdb61defc69edb7f45bb203d06f47bc1c92f84a0057c36da959d700b0"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "amountMismatch": {
+                    "summary": "Amount Mismatch Error",
+                    "value": {
+                      "error_message": "Error Amount not match",
+                      "expired_at": "1901-01-01T00:00:00.000Z"
+                    }
+                  },
+                  "vaRequestError": {
+                    "summary": "VA Request Error",
+                    "value": {
+                      "status": "Error sending VA request",
+                      "expired_at": "1901-01-01T00:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          },
+          {
+            "AppIdAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api-stage.indiana.co.id",
+            "description": "Sandbox server"
+          }
+        ]
+      }
+    },
+    "/v3/payment/methods": {
+      "get": {
+        "tags": [
+          "Payment"
+        ],
+        "summary": "Get Payment Method API",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit number of records per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment Method List",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethodListResponse"
+                },
+                "examples": {
+                  "sample": {
+                    "summary": "Contoh Response Payment Methods",
+                    "value": {
+                      "data": [
+                        {
+                          "payment_method_name": "BJB",
+                          "payment_channel": "VA",
+                          "payment_description": "BJB VA",
+                          "fee_type": "fixed_fee",
+                          "fixed_fee": 3500,
+                          "percentage_fee": 0
+                        },
+                        {
+                          "payment_method_name": "DANA",
+                          "payment_channel": "e-wallet",
+                          "payment_description": "DANA",
+                          "fee_type": "percentage_fee",
+                          "fixed_fee": 0,
+                          "percentage_fee": 2.73
+                        },
+                        {
+                          "payment_method_name": "OVO",
+                          "payment_channel": "e-wallet",
+                          "payment_description": "OVO",
+                          "fee_type": "percentage_fee",
+                          "fixed_fee": 0,
+                          "percentage_fee": 1.5
+                        }
+                      ],
+                      "service_rate": 1000,
+                      "pagination": {
+                        "page": 1,
+                        "limit": 10,
+                        "total_count": 10,
+                        "total_page": 2
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          },
+          {
+            "AppIdAuth": []
+          }
+        ],
+        "servers": [
+          {
+            "url": "https://api-stage.indiana.co.id",
+            "description": "Sandbox server"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProductListResponse": {
+        "type": "object",
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductListResponse_products"
+            }
+          }
+        }
+      },
+      "InquirySuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status_code": {
+            "type": "string",
+            "example": "INDOK1"
+          },
+          "status_desc": {
+            "type": "string",
+            "example": "Inquiry Successfully Created"
+          },
+          "status": {
+            "type": "string",
+            "example": "Success"
+          },
+          "order_id": {
+            "type": "string",
+            "example": "17072520MLBB038424"
+          },
+          "indico_product_id": {
+            "type": "string",
+            "example": "DG0011MLBB31"
+          },
+          "order_details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InquirySuccessResponse_order_details"
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-17T13:40:00.632Z"
+          }
+        }
+      },
+      "VAResponse": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "example": "stage-krby5rym"
+          },
+          "status": {
+            "type": "string",
+            "example": "SUCCESS"
+          },
+          "expired_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-17T13:49:31.529Z"
+          },
+          "refrence_id": {
+            "type": "string",
+            "example": "3b8c74a9-93f9-44ba-80c1-ae1aa7f57512"
+          },
+          "payment_detail": {
+            "$ref": "#/components/schemas/VAResponse_payment_detail"
+          }
+        }
+      },
+      "EwalletResponse": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "example": "stage-iwf69nwp"
+          },
+          "invoice_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://app.uat.shopeepay.co.id/u/pay_checkout?"
+          },
+          "status": {
+            "type": "string",
+            "example": "SUCCESS"
+          },
+          "expired_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-18T20:45:50+07:00"
+          },
+          "refrence_id": {
+            "type": "string",
+            "example": "stage-iwf69nwp"
+          },
+          "payment_detail": {
+            "$ref": "#/components/schemas/EwalletResponse_payment_detail"
+          }
+        }
+      },
+      "QRISResponse": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "type": "string",
+            "example": "stage-qsule8c1"
+          },
+          "status": {
+            "type": "string",
+            "example": "SUCCESS"
+          },
+          "qr_code": {
+            "type": "string",
+            "example": "/u7eRoySpZIZVJGQDjI9BX1nXzhrPjXwSPhfG+j3UEPjj7JbF72CzkiuzPlPPY3GwEsR5m5t3zZPJzz0/w7"
+          },
+          "expired_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-07-18T20:46:47+07:00"
+          },
+          "refrence_id": {
+            "type": "string",
+            "example": "stage-qsule8c1"
+          },
+          "payment_detail": {
+            "$ref": "#/components/schemas/QRISResponse_payment_detail"
+          }
+        }
+      },
+      "PaymentMethodListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethodListResponse_data"
+            }
+          },
+          "service_rate": {
+            "type": "number",
+            "example": 1000
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaymentMethodListResponse_pagination"
+          }
+        }
+      },
+      "inquiryv1_details": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "zone_id": {
+            "type": "string"
+          }
+        }
+      },
+      "inquiryv1_data": {
+        "required": [
+          "order_count"
+        ],
+        "type": "object",
+        "properties": {
+          "order_count": {
+            "type": "integer"
+          },
+          "details": {
+            "$ref": "#/components/schemas/inquiryv1_details"
+          }
+        }
+      },
+      "inquiry_v1_body": {
+        "required": [
+          "callback_url",
+          "data",
+          "indico_product_id"
+        ],
+        "type": "object",
+        "properties": {
+          "indico_product_id": {
+            "type": "string"
+          },
+          "callback_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/inquiryv1_data"
+            }
+          }
+        }
+      },
+      "v3paymentinvoice_items": {
+        "required": [
+          "name",
+          "price",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the item",
+            "example": "Total Tagihan"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Quantity of the item",
+            "example": 1
+          },
+          "price": {
+            "type": "number",
+            "description": "Price of the item",
+            "example": 10000
+          }
+        }
+      },
+      "payment_invoice_body": {
+        "required": [
+          "amount",
+          "items",
+          "order_id",
+          "payment_method"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "The total amount for the payment",
+            "example": 1000
+          },
+          "success_redirect_url": {
+            "type": "string",
+            "description": "The URL to redirect to after a successful payment",
+            "format": "uri",
+            "example": "http://{domain-client}/"
+          },
+          "failure_redirect_url": {
+            "type": "string",
+            "description": "The URL to redirect to if the payment fails",
+            "format": "uri",
+            "example": "http://{domain-client}/"
+          },
+          "order_id": {
+            "type": "string",
+            "description": "Unique order ID",
+            "example": "stage-{{id}}"
+          },
+          "description": {
+            "type": "string",
+            "description": "A brief description of the payment",
+            "example": "stage-{{$timestamp}}"
+          },
+          "invoice_duration": {
+            "type": "integer",
+            "description": "Invoice validity duration in minutes (optional)",
+            "example": 180
+          },
+          "payment_method": {
+            "type": "string",
+            "description": "The payment method used for the invoice",
+            "example": "SHOPEEPAY"
+          },
+          "msisdn": {
+            "type": "string",
+            "description": "The customer's phone number (optional)",
+            "example": "+628123123123"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/v3paymentinvoice_items"
+            }
+          }
+        }
+      },
+      "inline_response_200": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VAResponse"
+          },
+          {
+            "$ref": "#/components/schemas/EwalletResponse"
+          },
+          {
+            "$ref": "#/components/schemas/QRISResponse"
+          }
+        ]
+      },
+      "ProductListResponse_details": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "Game TopUp"
+          },
+          "type": {
+            "type": "string",
+            "example": "ID"
+          },
+          "field": {
+            "type": "array",
+            "example": [
+              "user_id",
+              "server_id",
+              "server_name"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "index": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "ProductListResponse_promo": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "fixed"
+          },
+          "amount": {
+            "type": "number",
+            "example": 10000
+          }
+        }
+      },
+      "ProductListResponse_products": {
+        "type": "object",
+        "properties": {
+          "indico_product_id": {
+            "type": "string",
+            "example": "alteragameTopUp292"
+          },
+          "description": {
+            "type": "string",
+            "example": "Game voucher TopUp 292"
+          },
+          "price": {
+            "type": "number",
+            "example": 150000
+          },
+          "group": {
+            "type": "string",
+            "example": ""
+          },
+          "category": {
+            "type": "string",
+            "example": ""
+          },
+          "subcat": {
+            "type": "string",
+            "example": ""
+          },
+          "code": {
+            "type": "string",
+            "example": ""
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductListResponse_details"
+            }
+          },
+          "promo": {
+            "$ref": "#/components/schemas/ProductListResponse_promo"
+          },
+          "server_list": {
+            "type": "array",
+            "example": [],
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "InquirySuccessResponse_details": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "MOBILE LEGEND 10 DIAMOND (ID)"
+          },
+          "status": {
+            "type": "string",
+            "example": "Success"
+          },
+          "status_desc": {
+            "type": "string",
+            "example": "Successfully Inquiry"
+          },
+          "user_name": {
+            "type": "string",
+            "example": "Coda test account"
+          },
+          "user_id": {
+            "type": "string",
+            "example": "1029384"
+          },
+          "zone_id": {
+            "type": "string",
+            "example": "111"
+          }
+        }
+      },
+      "InquirySuccessResponse_order_details": {
+        "type": "object",
+        "properties": {
+          "order_count": {
+            "type": "integer",
+            "example": 1
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InquirySuccessResponse_details"
+            }
+          }
+        }
+      },
+      "VAResponse_payment_detail": {
+        "type": "object",
+        "properties": {
+          "virtual_account": {
+            "type": "string",
+            "example": "132819999563447"
+          }
+        }
+      },
+      "EwalletResponse_payment_detail": {
+        "type": "object",
+        "properties": {
+          "desktop_web_checkout_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://app.uat.shopeepay.co.id/u/pay_checkout"
+          }
+        }
+      },
+      "QRISResponse_payment_detail": {
+        "type": "object",
+        "properties": {
+          "qr_checkout_string": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://devo.finpay.id/pg/payment/card/v2/access/91f55d9fdb61defc69edb7f45bb203d06f47bc1c92f84a0057c36da959d700b0"
+          }
+        }
+      },
+      "PaymentMethodListResponse_data": {
+        "type": "object",
+        "properties": {
+          "payment_method_name": {
+            "type": "string",
+            "example": "BJB"
+          },
+          "payment_channel": {
+            "type": "string",
+            "example": "VA"
+          },
+          "payment_description": {
+            "type": "string",
+            "example": "BJB VA"
+          },
+          "fee_type": {
+            "type": "string",
+            "example": "fixed_fee"
+          },
+          "fixed_fee": {
+            "type": "number",
+            "example": 3500
+          },
+          "percentage_fee": {
+            "type": "number",
+            "example": 0
+          }
+        }
+      },
+      "PaymentMethodListResponse_pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "example": 10
+          },
+          "total_count": {
+            "type": "integer",
+            "example": 10
+          },
+          "total_page": {
+            "type": "integer",
+            "example": 2
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "name": "api-key",
+        "in": "header"
+      },
+      "AppIdAuth": {
+        "type": "apiKey",
+        "name": "application-id",
+        "in": "header"
+      }
+    }
+  }
+}

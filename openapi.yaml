@@ -191,74 +191,7 @@ paths:
                     status: Cancelled
                     timestamp: 0001-01-01T00:00:00Z
 
-  /cp/v1/games:
-    get:
-      tags:
-          - Order
-      summary: Get MO Request API
-      servers:
-        - url: https://api-stg.gamespad.net
-          description: Sandbox server
-      parameters:
-        - in: query
-          name: msisdn
-          schema:
-            type: string
-          required: true
-          description: User encrypted msisnd get from telkomsel chanel, e.g. HHY-QEEERERERXXXX
-        - in: query
-          name: sms
-          schema:
-            type: string
-          required: true
-          description: SMS content, e.g. UDGMLL50K
-        - in: query
-          name: adn
-          schema:
-            type: string
-          required: true
-          description: ADN code, e.g. 3230
-        - in: query
-          name: http_segment_number
-          schema:
-            type: integer
-          required: false
-          description: Segment number, e.g. 1
-        - in: query
-          name: http_segment_count
-          schema:
-            type: integer
-          required: false
-          description: Total segment count, e.g. 2
-        - in: query
-          name: trx_id
-          schema:
-            type: string
-          required: true
-          description: Transaction ID, e.g. 251130142638010030
-      responses:
-        '200':
-          description: MO Request Success
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: ok
-              examples:
-                sample:
-                  summary: Contoh Response MO Request Success
-                  value: ok
-        '400':
-          description: Invalid Parameters
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: invalid params
-              examples:
-                sample:
-                  summary: Contoh Response Invalid Params
-                  value: invalid params
+
 
   /v3/payment/invoice:
     post:

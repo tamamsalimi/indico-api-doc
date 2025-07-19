@@ -23,7 +23,7 @@ paths:
         - ApiKeyAuth: []
         - AppIdAuth: []
       servers:
-        - url: https://api-stage.indiana.co.id
+        - url: https://{{host}
           description: Sandbox server   
       parameters:
         - name: product_id
@@ -86,7 +86,7 @@ paths:
         - ApiKeyAuth: []
         - AppIdAuth: []
       servers:
-        - url: https://api-stage.indiana.co.id
+        - url: https://{{host}
           description: Sandbox server  
       requestBody:
         required: true
@@ -202,7 +202,7 @@ paths:
         - ApiKeyAuth: []
         - AppIdAuth: []
       servers:
-        - url: https://api-stage.indiana.co.id
+        - url: https://{{host}
           description: Sandbox server  
       requestBody:
         required: true
@@ -352,7 +352,7 @@ paths:
         - ApiKeyAuth: []
         - AppIdAuth: []
       servers:
-        - url: https://api-stage.indiana.co.id
+        - url: https://{{host}
           description: Sandbox server  
       parameters:
         - name: page
@@ -405,6 +405,49 @@ paths:
                       limit: 10
                       total_count: 10
                       total_page: 2
+                      
+  /callback:
+    post:
+      tags:
+        - Payment
+      summary: Settlement Callback Notification
+      description: Endpoint to receive settlement callback notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackRequest'
+            example:
+              payment_id: pay_1234567890
+              order_id: stage-krby5rym
+              status: PAID
+              payment_channel: VA
+              payment_method: BJB
+              paid_at: 2025-07-17T13:49:31Z
+              description: Settlement completed successfully
+      responses:
+        '200':
+          description: Callback received successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Callback processed
+        '400':
+          description: Invalid callback request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid payload
+
 
 components:
   securitySchemes:
@@ -655,3 +698,47 @@ components:
             total_page:
               type: integer
               example: 2
+    CallbackRequest:
+      type: object
+      required:
+        - payment_id
+        - order_id
+        - status
+        - payment_channel
+        - payment_method
+        - paid_at
+      properties:
+        payment_id:
+          type: string
+          description: Unique payment identifier from the payment gateway
+          example: pay_1234567890
+        order_id:
+          type: string
+          description: The order ID associated with the payment
+          example: stage-krby5rym
+        status:
+          type: string
+          description: Payment status
+          enum:
+            - PAID
+            - FAILED
+            - COMPLETED
+          example: COMPLETED
+        payment_channel:
+          type: string
+          description: Payment channel used (e.g., VA, e-wallet)
+          example: VA
+        payment_method:
+          type: string
+          description: Payment method name (e.g., BJB)
+          example: BJB
+        paid_at:
+          type: string
+          format: date-time
+          description: Timestamp when the payment was completed
+          example: 2025-07-17T13:49:31Z
+        description:
+          type: string
+          description: Additional information about the payment
+          example: Payment completed successfully
+            

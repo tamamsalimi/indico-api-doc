@@ -497,6 +497,68 @@
           }
         ]
       }
+    },
+    "/{client_host}/callback": {
+      "post": {
+        "tags": [
+          "Payment"
+        ],
+        "summary": "Payment Callback Notification",
+        "description": "Endpoint to receive payment callback notifications from payment gateway",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CallbackRequest"
+              },
+              "example": {
+                "payment_id": "pay_1234567890",
+                "order_id": "stage-krby5rym",
+                "status": "PAID",
+                "payment_channel": "VA",
+                "payment_method": "BJB",
+                "paid_at": "2025-07-17T13:49:31Z",
+                "description": "Payment completed successfully"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Callback received successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Callback processed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid callback request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid payload"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

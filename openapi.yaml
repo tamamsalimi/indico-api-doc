@@ -157,9 +157,10 @@ paths:
                             zone_id: "111"
                     timestamp: 2025-07-17T20:40:00.63261936+07:00
         '202':
-          description: Invalid User (processed by channel)
+          description: Invalid User
           content:
             application/json:
+              schema: 
               examples:
                 sample:
                   summary: Contoh Response Invalid User
@@ -182,6 +183,8 @@ paths:
           description: Invalid Request Body
           content:
             application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestResponse'
               examples:
                 sample:
                   summary: Contoh Response Invalid Request
@@ -331,6 +334,8 @@ paths:
           description: Bad Request
           content:
             application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
               examples:
                 amountMismatch:
                   summary: Amount Mismatch Error
@@ -741,4 +746,36 @@ components:
           type: string
           description: Additional information about the payment
           example: Payment completed successfully
+    InvalidRequestResponse:
+      type: object
+      properties:
+        status_code:
+          type: string
+          example: IND001
+        status_desc:
+          type: string
+          example: Invalid Request Body
+        status:
+          type: string
+          example: Cancelled
+        timestamp:
+          type: string
+          format: date-time
+          example: 0001-01-01T00:00:00Z
+    BadRequestResponse:
+      type: object
+      properties:
+        # Bisa ada error_message atau status, salah satu atau keduanya opsional
+        error_message:
+          type: string
+          example: Error Amount not match
+        status:
+          type: string
+          example: Error sending VA request
+        expired_at:
+          type: string
+          format: date-time
+          example: 0001-01-01T00:00:00Z
+    
+        
             

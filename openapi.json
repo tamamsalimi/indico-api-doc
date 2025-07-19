@@ -125,7 +125,7 @@
         ],
         "servers": [
           {
-            "url": "https://api-stage.indiana.co.id",
+            "url": "https://{host}",
             "description": "Sandbox server"
           }
         ]
@@ -267,7 +267,7 @@
         ],
         "servers": [
           {
-            "url": "https://api-stage.indiana.co.id",
+            "url": "https://{host}",
             "description": "Sandbox server"
           }
         ]
@@ -396,7 +396,7 @@
         ],
         "servers": [
           {
-            "url": "https://api-stage.indiana.co.id",
+            "url": "https://{host}",
             "description": "Sandbox server"
           }
         ]
@@ -492,7 +492,7 @@
         ],
         "servers": [
           {
-            "url": "https://api-stage.indiana.co.id",
+            "url": "https://{host}",
             "description": "Sandbox server"
           }
         ]

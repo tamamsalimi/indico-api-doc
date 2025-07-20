@@ -20,8 +20,8 @@ paths:
           - Product
       summary: Get Product List API
       security:
-        - ApiKeyAuth: []
-        - AppIdAuth: []
+        - OrderApiKeyAuth: []
+          AppIdAuth: []
       servers:
         - url: https://{{host}
           description: Sandbox server   
@@ -83,8 +83,8 @@ paths:
           - Order
       summary: Create Order Inquiry API
       security:
-        - ApiKeyAuth: []
-        - AppIdAuth: []
+        - OrderApiKeyAuth: []
+          AppIdAuth: []
       servers:
         - url: https://{{host}
           description: Sandbox server  
@@ -206,8 +206,8 @@ paths:
         - Payment
       summary: Create Payment Invoice API
       security:
-        - ApiKeyAuth: []
-        - AppIdAuth: []
+        - PaymentApiKeyAuth: []
+          AppIdAuth: []
       servers:
         - url: https://{{host}
           description: Sandbox server  
@@ -239,8 +239,8 @@ paths:
                   example: "http://{domain-client}/"
                 order_id:
                   type: string
-                  description: "Unique order ID"
-                  example: "stage-{{id}}"
+                  description: "Use inquiry `order_id` for **DTU**, or generate a random `order_id` for **VOUCHER**."
+                  example: "20250720164500FFND0001"
                 description:
                   type: string
                   description: "A brief description of the payment"
@@ -268,8 +268,8 @@ paths:
                     properties:
                       name:
                         type: string
-                        description: "Name of the item / Assign as indico_product_id for voucher-based transactions."
-                        example: "Total Tagihan / DG0011GNIM03"
+                        description: "`name` of the `item` / Assign as `indico_product_id` for **VOUCHER**-based transactions."
+                        example: "Total Tagihan or DG0011GNIM03"
                       quantity:
                         type: integer
                         description: "Quantity of the item"
@@ -358,8 +358,8 @@ paths:
           - Payment
       summary: Get Payment Method API
       security:
-        - ApiKeyAuth: []
-        - AppIdAuth: []
+        - PaymentApiKeyAuth: []
+          AppIdAuth: []
       servers:
         - url: https://{{host}
           description: Sandbox server  
@@ -460,7 +460,11 @@ paths:
 
 components:
   securitySchemes:
-      ApiKeyAuth:
+      PaymentApiKeyAuth:
+        type: apiKey
+        in: header
+        name: api-key
+      OrderApiKeyAuth:
         type: apiKey
         in: header
         name: api-key

@@ -95,10 +95,13 @@ paths:
             schema:
               type: object
               required:
+                - client_transaction_id
                 - indico_product_id
                 - callback_url
                 - data
               properties:
+                client_transaction_id:
+                  type: string
                 indico_product_id:
                   type: string
                 callback_url:
@@ -123,6 +126,7 @@ paths:
               sample-request:
                 summary: Contoh Request Inquiry
                 value:
+                  client_transaction_id: "DGTRX20250107000000000001"
                   indico_product_id: "DG0011MLBB31"
                   callback_url: "https://mycallback.example.com/callback"
                   data:
@@ -264,8 +268,8 @@ paths:
                     properties:
                       name:
                         type: string
-                        description: "Name of the item"
-                        example: "Total Tagihan"
+                        description: "Name of the item / Assign as indico_product_id for voucher-based transactions."
+                        example: "Total Tagihan / DG0011GNIM03"
                       quantity:
                         type: integer
                         description: "Quantity of the item"

@@ -239,12 +239,8 @@ paths:
                   example: "http://{domain-client}/"
                 order_id:
                   type: string
-                  description: "Use inquiry `order_id` for **DTU**, or generate a random `order_id` for **VOUCHER**."
-                  example: "20250720164500FFND0001"
-                client_transaction_id:
-                  type: string
-                  description: "`required` for **VOUCHER** "
-                  example: "DGTRX20250107000000000001"  
+                  description: "For **DTU**, use the `order_id` from the inquiry response, and For **VOUCHER** set the `order_id` to the client's transaction ID `(client_transaction_id)`"
+                  example: "20250720164500FFND0001" 
                 description:
                   type: string
                   description: "A brief description of the payment"

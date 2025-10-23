@@ -329,11 +329,13 @@ paths:
                   value:
                     order_id: "stage-qsule8c1"
                     status: "SUCCESS"
-                    qr_code: "/u7eRoySpZIZVJGQDjI9BX1nXzhrPjXwSPhfG+j3UEPjj7JbF72CzkiuzPlPPY3GwEsR5m5t3zZPJzz0/w7"
+                    invoice_url : "https://{nirwana-host}/payment/qris/23102517MLBB319839"
+                    qr_code: "random string"
                     expired_at: "2025-07-18T20:46:47+07:00"
                     refrence_id: "stage-qsule8c1"
                     payment_detail:
-                      qr_checkout_string: "https://devo.finpay.id/pg/payment/card/v2/access/91f55d9fdb61defc69edb7f45bb203d06f47bc1c92f84a0057c36da959d700b0"
+                      qr_page_url : "ttps://{nirwana-host}/payment/qris/23102517MLBB319839"
+                      qr_checkout_string: "random string"
         '400':
           description: Bad Request
           content:
@@ -414,6 +416,58 @@ paths:
                       limit: 10
                       total_count: 10
                       total_page: 2
+  /v3/payment/status:
+    get:
+      tags:
+        - Payment
+      summary: Get Payment Status API
+      security:
+        - PaymentApiKeyAuth: []
+          AppIdAuth: []
+      servers:
+        - url: https://{{host}
+          description: Sandbox server  
+      parameters:
+        - name: order_id
+          in: query
+          schema:
+            type: string
+          required: true
+          description: The order ID to check the payment status for
+      responses:
+        '200':
+          description: Payment Status Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_id:
+                    type: string
+                    example: stage-krby5rym
+                  status:
+                    type: string
+                    example: PENDING/PAID/COMPLETED/FAILED
+                  paid_at:
+                    type: string
+                    format: date-time
+                    example: "2025-07-17T13:49:31.529Z"
+                  product_name:
+                    type: string
+                    example: Game voucher TopUp 292 
+                  message:
+                    type: string
+                    example: Payment completed successfully  
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid order_id parameter                    
                       
   /callback:
     post:

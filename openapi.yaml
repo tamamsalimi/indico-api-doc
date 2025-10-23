@@ -452,12 +452,12 @@ paths:
                     type: string
                     format: date-time
                     example: "2025-07-17T13:49:31.529Z"
-                  product_name:
-                    type: string
-                    example: Game voucher TopUp 292 
                   message:
                     type: string
-                    example: Payment completed successfully  
+                    example: Payment completed successfully
+                  payment_method:
+                    type: string
+                    example: GOPAY/QRIS/VA  
         '400':
           description: Bad Request
           content:

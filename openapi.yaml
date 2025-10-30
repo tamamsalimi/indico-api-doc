@@ -239,7 +239,7 @@ paths:
                   example: "http://{domain-client}/"
                 order_id:
                   type: string
-                  description: "transaction ID comes from the client`(client_transaction_id)`"
+                  description: "order_id comes from the client`(client_transaction_id)`"
                   example: "20251030908720738229" 
                 description:
                   type: string

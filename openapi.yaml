@@ -334,7 +334,7 @@ paths:
                     expired_at: "2025-07-18T20:46:47+07:00"
                     refrence_id: "stage-qsule8c1"
                     payment_detail:
-                      qr_page_url : "ttps://{nirwana-host}/payment/qris/23102517MLBB319839"
+                      qr_page_url : "https://{nirwana-host}/payment/qris/23102517MLBB319839"
                       qr_checkout_string: "random string"
         '400':
           description: Bad Request
@@ -719,7 +719,11 @@ components:
             qr_checkout_string:
               type: string
               format: uri
-              example: "https://devo.finpay.id/pg/payment/card/v2/access/91f55d9fdb61defc69edb7f45bb203d06f47bc1c92f84a0057c36da959d700b0"
+              example: "random string"
+            qr_page_url:
+              type: string
+              format: uri
+              example: "https://{host}/payment/qris/client_transaction_id"
 
     PaymentMethodListResponse:
       type: object

@@ -239,8 +239,8 @@ paths:
                   example: "http://{domain-client}/"
                 order_id:
                   type: string
-                  description: "For **DTU**, use the `order_id` from the inquiry response, and For **VOUCHER** set the `order_id` to the client's transaction ID `(client_transaction_id)`"
-                  example: "20250720164500FFND0001" 
+                  description: "transaction ID comes from the client`(client_transaction_id)`"
+                  example: "20251030908720738229" 
                 description:
                   type: string
                   description: "A brief description of the payment"

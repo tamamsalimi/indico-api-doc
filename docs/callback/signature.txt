@@ -6,7 +6,7 @@ This document explains how to generate the signature using Application ID and AP
 
 # 1. Signature Overview
 
-We use HMAC-SHA512 with your API Key as the secret key.
+We use **HMAC-SHA512** with your **SecretKey** as the signing key.
 
 Final formula:
 ```
@@ -28,8 +28,9 @@ Example:
    ```
 
 ---
+**Note:** 
 
-*Note: SecretKey is different from your API Key.  
+*SecretKey is different from your API Key.  
 API Key is used for client → server requests.  
 SecretKey is used only for verifying server → client callbacks.*
 
@@ -43,7 +44,7 @@ Use uppercase: **GET, POST, PUT, PATCH, DELETE.**
 
 ## 3.2 Relative URL
 
-Relative URL = everything after hostname + port.
+**Relative URL** = *everything after hostname + port*.
 
 | Full URL | Relative URL |
 |----------|--------------|
@@ -93,7 +94,9 @@ Steps:
 2. Hash using SHA-256
 3. Convert hash to lowercase hex
 
+```
 If body empty → SHA256("")
+```
 
 ---
 

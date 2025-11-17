@@ -1,6 +1,6 @@
 # 🔐 Generate Signature (Symmetric HMAC)
 
-This document explains how to generate the signature using Application ID and API Key with HMAC-SHA512. The signature protects request integrity, authenticity, and prevents tampering.
+This document explains how to generate the signature using `ApplicationID`, `APIKey` and `SecretKey` with **HMAC-SHA512**. The signature protects request integrity, authenticity, and prevents tampering.
 
 ---
 

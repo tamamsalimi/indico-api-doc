@@ -1,0 +1,100 @@
+package signature
+
+import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"crypto/sha512"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
+	"strings"
+)
+
+// ------------------------------------------------------------
+// Minify JSON (same as Java/Node)
+// ------------------------------------------------------------
+func MinifyJSON(body string) (string, error) {
+	body = strings.TrimSpace(body)
+	if body == "" {
+		return "", nil
+	}
+
+	var obj interface{}
+	if err := json.Unmarshal([]byte(body), &obj); err != nil {
+		return "", err
+	}
+
+	minified, err := json.Marshal(obj)
+	if err != nil {
+		return "", err
+	}
+
+	return string(minified), nil
+}
+
+// ------------------------------------------------------------
+// SHA256 hex lowercase
+// ------------------------------------------------------------
+func Sha256Hex(data string) string {
+	hash := sha256.Sum256([]byte(data))
+	return hex.EncodeToString(hash[:])
+}
+
+// ------------------------------------------------------------
+// Token = Base64(appId:apiKey)
+// ------------------------------------------------------------
+func GenerateToken(appId, apiKey string) string {
+	raw := appId + ":" + apiKey
+	return base64.StdEncoding.EncodeToString([]byte(raw))
+}
+
+// ------------------------------------------------------------
+// Build StringToSign
+// METHOD:RelativeURL:Token:SHA256Body:Timestamp
+// ------------------------------------------------------------
+func BuildStringToSign(method, relativeURL, token, sha256Body, timestamp string) string {
+	return strings.ToUpper(method) + ":" +
+		relativeURL + ":" +
+		token + ":" +
+		sha256Body + ":" +
+		timestamp
+}
+
+// ------------------------------------------------------------
+// HMAC-SHA512 → Base64
+// ------------------------------------------------------------
+func HmacSha512Base64(secret, message string) string {
+	mac := hmac.New(sha512.New, []byte(secret))
+	mac.Write([]byte(message))
+	return base64.StdEncoding.EncodeToString(mac.Sum(nil))
+}
+
+// ------------------------------------------------------------
+// Final Signature (same as Java version)
+// ------------------------------------------------------------
+func GenerateCallbackSignature(
+	secretKey,
+	method,
+	relativeURL,
+	token,
+	timestamp,
+	body string,
+) (string, string, error) {
+
+	// 1. Minify
+	minified, err := MinifyJSON(body)
+	if err != nil {
+		return "", "", err
+	}
+
+	// 2. SHA256 body hash
+	sha256Body := Sha256Hex(minified)
+
+	// 3. Build StringToSign
+	stringToSign := BuildStringToSign(method, relativeURL, token, sha256Body, timestamp)
+
+	// 4. HMAC-SHA512 → Base64
+	signature := HmacSha512Base64(secretKey, stringToSign)
+
+	return signature, stringToSign, nil
+}

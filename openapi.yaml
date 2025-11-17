@@ -474,7 +474,26 @@ paths:
       tags:
         - Payment
       summary: Settlement Callback Notification
-      description: Endpoint to receive settlement callback notifications
+      security:
+        - PaymentApiKeyAuth: []
+          AppIdAuth: []
+      description: Endpoint to receive payment settlement callbacks from the payment gateway. 
+            
+      parameters:
+      - in: header
+        name: timestamp
+        required: true
+        schema:
+          type: string
+        description: ISO8601 timestamp when callback was generated.
+
+      - in: header
+        name: signature
+        required: true
+        schema:
+          type: string
+        description: HMAC-SHA512 signature (Base64 encoded).
+
       requestBody:
         required: true
         content:
@@ -510,6 +529,28 @@ paths:
                   error:
                     type: string
                     example: Invalid payload
+
+  /callback-signature:
+    get:
+      tags:
+        - Payment
+      summary: Get Callback Signature Documentation
+      description:
+        $ref: "./docs/callback/signature.txt" 
+      x-codeSamples:
+        - lang: javascript
+          label: JavaScript
+          source:
+            $ref: "./docs/callback/sample-js.txt"
+        - lang: java
+          label: Java
+          source:
+            $ref: "./docs/callback/sample-java.txt"
+        - lang: go
+          label: GO
+          source:
+            $ref: "./docs/callback/sample-go.txt"
+
 
 
 components:

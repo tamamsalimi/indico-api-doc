@@ -1,0 +1,75 @@
+const crypto = require("crypto");
+
+// ----------------------------
+// Minify JSON (same as Go)
+// ----------------------------
+function minifyJSON(body) {
+    if (!body || body.trim() === "") return "";
+    try {
+        const obj = JSON.parse(body);
+        return JSON.stringify(obj);
+    } catch (err) {
+        throw new Error("Invalid JSON: " + err.message);
+    }
+}
+
+// ----------------------------
+// SHA256 body hash (hex lowercase)
+// ----------------------------
+function sha256Hex(minified) {
+    return crypto.createHash("sha256").update(minified, "utf8").digest("hex");
+}
+
+// ----------------------------
+// Token = Base64(appId:apiKey)
+// ----------------------------
+function generateToken(appId, apiKey) {
+    return Buffer.from(`${appId}:${apiKey}`).toString("base64");
+}
+
+// ----------------------------
+// Build StringToSign
+// METHOD:RelativeURL:Token:SHA256Body:Timestamp
+// ----------------------------
+function buildStringToSign(method, relativeUrl, token, sha256Body, timestamp) {
+    return `${method.toUpperCase()}:${relativeUrl}:${token}:${sha256Body}:${timestamp}`;
+}
+
+// ----------------------------
+// HMAC-SHA512 → Base64
+// ----------------------------
+function generateHMACSignature(secretKey, stringToSign) {
+    return crypto
+        .createHmac("sha512", secretKey)
+        .update(stringToSign, "utf8")
+        .digest("base64");
+}
+
+// ----------------------------
+// Full Signature Generator (match Golang)
+// ----------------------------
+function generateSignature(secretKey, method, relativeUrl, token, timestamp, body) {
+    const minified = minifyJSON(body);
+    const sha256Body = sha256Hex(minified);
+
+    const stringToSign = buildStringToSign(
+        method,
+        relativeUrl,
+        token,
+        sha256Body,
+        timestamp
+    );
+
+    const signature = generateHMACSignature(secretKey, stringToSign);
+
+    return { signature, stringToSign };
+}
+
+module.exports = {
+    minifyJSON,
+    sha256Hex,
+    generateToken,
+    buildStringToSign,
+    generateHMACSignature,
+    generateSignature
+};

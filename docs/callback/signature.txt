@@ -1,0 +1,125 @@
+# 🔐 Generate Signature (Symmetric HMAC)
+
+This document explains how to generate the signature using Application ID and API Key with HMAC-SHA512. The signature protects request integrity, authenticity, and prevents tampering.
+
+---
+
+# 1. Signature Overview
+
+We use HMAC-SHA512 with your API Key as the secret key.
+
+Final formula:
+```
+X-SIGNATURE = Base64( HMAC-SHA512(secretKey, StringToSign) )
+```
+
+---
+
+# 2. StringToSign Format
+
+StringToSign is created by joining 5 fields with colon separators:
+
+**StringToSign** = ```HTTPMethod : RelativeURL : Token : SHA256Body : Timestamp```
+
+Example:
+
+   ```
+   POST:/api/v2/sample?param1=value1&param2=value2:QXBwSUQ6QVBJLUtFWQ==:7a3dbf1e9bf9fdad27f6e44be72c3fa5b40f4eac5001d14a59f59b7ea3aba1f4:2025-11-17T12:43:20Z
+   ```
+
+---
+
+*Note: SecretKey is different from your API Key.  
+API Key is used for client → server requests.  
+SecretKey is used only for verifying server → client callbacks.*
+
+
+# 3. Component Details
+
+## 3.1 HTTP Method
+Use uppercase: **GET, POST, PUT, PATCH, DELETE.**
+
+---
+
+## 3.2 Relative URL
+
+Relative URL = everything after hostname + port.
+
+| Full URL | Relative URL |
+|----------|--------------|
+| https://example.com/api/v2/sample?param1=value1&param2=value2 | /api/v2/sample?param1=value1&param2=value2 |
+| https://example.com or https://example.com/  | / |
+
+### URI-Encoding Rules
+Do NOT encode:
+```
+- /
+- ?, =, &
+- A–Z, a–z, 0–9, -, _, ., ~
+```
+**Encode everything else using %XY (UTF-8 based).**
+
+### Query Parameter Sorting
+1. Sort by parameter name (lexicographically)
+2. If same name → sort by value
+
+Example original:
+```
+/api/v2/sample?A-param=value1&Z-param=value2&B-param=value3
+```
+
+Sorted:
+```
+/api/v2/sample?A-param=value1&B-param=value3&Z-param=value2
+```
+
+---
+
+## 3.3 Token (App Authentication)
+
+**Token** = ``Base64(applicationId:apiKey)``
+
+Example:
+```
+myApp123:secret456 → bXlBcHAxMjM6c2VjcmV0NDU2
+```
+
+---
+
+## 3.4 SHA256 Body Hash (Minified JSON)
+
+Steps:
+1. Minify JSON (remove all spaces)
+2. Hash using SHA-256
+3. Convert hash to lowercase hex
+
+If body empty → SHA256("")
+
+---
+
+## 3.5 Timestamp Format (ISO8601)
+```
+Format:
+YYYY-MM-DDThh:mm:ssTZD
+
+Example:
+2025-11-17T12:43:20Z
+```
+
+---
+
+# 4. Final Signature Generation Steps
+
+1. Compute SHA256(minified_body) → SHA256Body  
+2. Build StringToSign horizontally:
+```
+HTTPMethod : RelativeURL : Token : SHA256Body : Timestamp
+```
+
+3. Generate signature:
+
+```
+X-SIGNATURE = Base64( HMAC-SHA512(secretKey, StringToSign) )
+```
+
+---

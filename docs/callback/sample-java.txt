@@ -1,0 +1,97 @@
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Base64;
+
+public class CallbackSigner {
+
+    // ------------------------------------------------------------
+    // Minify JSON (same logic as Go/Node)
+    // ------------------------------------------------------------
+    public static String minifyJson(String json) throws Exception {
+        if (json == null || json.trim().isEmpty()) {
+            return "";
+        }
+
+        // Simple JSON minification: parse & re-stringify (no spaces)
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        Object obj = mapper.readValue(json, Object.class);
+        return mapper.writeValueAsString(obj);
+    }
+
+    // ------------------------------------------------------------
+    // SHA-256 hex lowercase
+    // ------------------------------------------------------------
+    public static String sha256Hex(String data) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] raw = digest.digest(data.getBytes(StandardCharsets.UTF_8));
+
+        StringBuilder hex = new StringBuilder();
+        for (byte b : raw) {
+            hex.append(String.format("%02x", b));
+        }
+        return hex.toString();
+    }
+
+    // ------------------------------------------------------------
+    // Base64(applicationId:apiKey)
+    // ------------------------------------------------------------
+    public static String generateToken(String appId, String apiKey) {
+        String raw = appId + ":" + apiKey;
+        return Base64.getEncoder().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+    }
+
+    // ------------------------------------------------------------
+    // Build StringToSign
+    // METHOD:RelativeURL:Token:SHA256Body:Timestamp
+    // ------------------------------------------------------------
+    public static String buildStringToSign(
+            String method,
+            String relativeUrl,
+            String token,
+            String sha256Body,
+            String timestamp
+    ) {
+        return method.toUpperCase() + ":" +
+                relativeUrl + ":" +
+                token + ":" +
+                sha256Body + ":" +
+                timestamp;
+    }
+
+    // ------------------------------------------------------------
+    // HMAC-SHA512 → Base64
+    // ------------------------------------------------------------
+    public static String hmacSha512Base64(String secretKey, String message) throws Exception {
+        Mac mac = Mac.getInstance("HmacSHA512");
+        SecretKeySpec secret = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
+        mac.init(secret);
+
+        byte[] rawHmac = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(rawHmac);
+    }
+
+    // ------------------------------------------------------------
+    // Full final signature (same as Go utils.GenerateSignature)
+    // ------------------------------------------------------------
+    public static String generateCallbackSignature(
+            String secretKey,
+            String method,
+            String relativeUrl,
+            String token,
+            String timestamp,
+            String body
+    ) throws Exception {
+
+        // 1. Minify + SHA256
+        String minified = minifyJson(body);
+        String sha256Body = sha256Hex(minified);
+
+        // 2. Build StringToSign
+        String stringToSign = buildStringToSign(method, relativeUrl, token, sha256Body, timestamp);
+
+        // 3. Generate Base64(HMAC-SHA512)
+        return hmacSha512Base64(secretKey, stringToSign);
+    }
+}

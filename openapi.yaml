@@ -222,6 +222,7 @@ paths:
                 - order_id
                 - payment_method
                 - items
+                - success_redirect_url
               properties:
                 amount:
                   type: number

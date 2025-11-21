@@ -417,11 +417,20 @@ paths:
                       limit: 10
                       total_count: 10
                       total_page: 2
-  /v3/payment/status:
+                      
+  /v3/payment/status/{orderId}:
     get:
       tags:
         - Payment
-      summary: Get Payment Status API
+      summary: Get Payment Status by Order ID
+      description: |
+            Retrieve the payment status for a specific order.
+
+            **Status → Message mapping:**
+            - `PAID` → *"Your payment has been received."*
+            - `PENDING` → *"Please complete your payment to continue."*
+            - `FAILED` → *"Your payment was not successful. Try again."*
+            - `COMPLETED` → *"Settlement completed. Thank you for your payment."*
       security:
         - PaymentApiKeyAuth: []
           AppIdAuth: []
@@ -430,11 +439,12 @@ paths:
           description: Sandbox server  
       parameters:
         - name: order_id
-          in: query
+          in: path
           schema:
             type: string
           required: true
-          description: The order ID to check the payment status for
+          description: Unique order ID used to retrieve its payment status
+
       responses:
         '200':
           description: Payment Status Retrieved Successfully
@@ -468,7 +478,40 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Invalid order_id parameter                    
+                    example: orderId is required
+        "404":
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "NOT_FOUND"
+                  order_id:
+                    type: string
+                    example: "ORDER-99999"
+                  message:
+                    type: string
+                    example: "No transaction found with the given order ID"
+
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ERROR"
+                  order_id:
+                    type: string
+                    example: "ORDER-12345"
+                  message:
+                    type: string
+                    example: "Internal server error"                   
                       
   /callback:
     post:

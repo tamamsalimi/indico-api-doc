@@ -779,6 +779,10 @@ components:
               type: string
               format: uri
               example: "https://app.uat.shopeepay.co.id/u/pay_checkout"
+            mobile_web_checkout_url:
+              type: string
+              format: uri
+              example: "https://app.uat.shopeepay.co.id/u/pay_checkout"  
 
     QRISResponse:
       type: object

@@ -248,7 +248,7 @@ paths:
                   example: "stage-{{$timestamp}}"
                 invoice_duration:
                   type: integer
-                  description: "Invoice validity duration in minutes (optional)"
+                  description: "Invoice validity duration in seconds (from the time of creation)"
                   example: 180
                 payment_method:
                   type: string
@@ -325,6 +325,7 @@ paths:
                     refrence_id: "stage-iwf69nwp"
                     payment_detail:
                       desktop_web_checkout_url: "https://app.uat.shopeepay.co.id/u/pay_checkout"
+                      mobile_web_checkout_url: "https://app.uat.shopeepay.co.id/u/pay_checkout"
                 QRIS:
                   summary: QRIS Response
                   value:

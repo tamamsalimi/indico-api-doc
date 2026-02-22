@@ -1,0 +1,12 @@
+// pseudo simple example (Java AES CBC)
+String apiKey = "your-api-key";
+String voucher = "PROMO2026";
+
+// encrypt
+String encrypted = AESUtil.encrypt(voucher, apiKey);
+
+// decrypt
+String decrypted = AESUtil.decrypt(encrypted, apiKey);
+
+System.out.println(encrypted);
+System.out.println(decrypted);

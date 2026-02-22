@@ -1,0 +1,39 @@
+const crypto = require("crypto");
+
+function getKey(apiKey) {
+  return crypto.createHash("sha256").update(apiKey).digest();
+}
+
+// ENCRYPT
+function encryptVoucher(voucher, apiKey) {
+  const key = getKey(apiKey);
+  const iv = crypto.randomBytes(16);
+
+  const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+  let encrypted = cipher.update(voucher, "utf8", "base64");
+  encrypted += cipher.final("base64");
+
+  return Buffer.concat([iv, Buffer.from(encrypted, "base64")]).toString("base64");
+}
+
+// DECRYPT
+function decryptVoucher(enc, apiKey) {
+  const raw = Buffer.from(enc, "base64");
+  const iv = raw.slice(0, 16);
+  const data = raw.slice(16);
+
+  const key = getKey(apiKey);
+  const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
+
+  let decrypted = decipher.update(data, null, "utf8");
+  decrypted += decipher.final("utf8");
+  return decrypted;
+}
+
+// sample
+const apiKey = "your-api-key";
+const enc = encryptVoucher("PROMO2026", apiKey);
+console.log("Encrypted:", enc);
+
+const dec = decryptVoucher(enc, apiKey);
+console.log("Decrypted:", dec);

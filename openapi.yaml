@@ -553,6 +553,11 @@ paths:
               payment_method: BJB
               paid_at: 2025-07-17T13:49:31Z
               description: Settlement completed successfully
+              detail:
+                status: SUCCESS
+                description: Minecraft (USA Region) Minecoins - 1720 Coins
+                voucher_code: U2FsdGVkX1encryptedVoucher==
+                expired: 19 February 2027
       responses:
         '200':
           description: Callback received successfully
@@ -595,6 +600,27 @@ paths:
           label: GO
           source:
             $ref: "./docs/callback/sample-go.txt"
+
+  /voucher-encryption:
+    get:
+      tags:
+        - Payment
+      summary: Voucher Encryption & Decryption Documentation
+      description:
+        $ref: "./docs/callback/voucher-encryption.txt"
+      x-codeSamples:
+        - lang: javascript
+          label: JavaScript
+          source:
+            $ref: "./docs/callback/sample-encrypt-js.txt"
+        - lang: java
+          label: Java
+          source:
+            $ref: "./docs/callback/sample-encrypt-java.txt"
+        - lang: go
+          label: GO
+          source:
+            $ref: "./docs/callback/sample-encrypt-go.txt"
 
 
 
@@ -868,6 +894,7 @@ components:
         - payment_channel
         - payment_method
         - paid_at
+        - details
       properties:
         payment_id:
           type: string
@@ -902,6 +929,37 @@ components:
           type: string
           description: Additional information about the payment
           example: Payment completed successfully
+        detail:
+          type: object
+          required:
+            - status
+            - description
+          properties:
+            status:
+              type: string
+              enum:
+                - SUCCESS
+                - FAILED
+              description: Payment status
+              example: Success
+
+            description:
+              type: string
+              description: Product description
+              example: Minecraft (USA Region) Minecoins - 1720 Coins
+
+            voucher_code:
+              type: string
+              description: >
+                Encrypted voucher code. Must be decrypted using Payment API key on receiver side.
+                Encryption format is determined by provider (AES-256 recommended).
+              example: U2FsdGVkX19Kf8s9k3l0Kj9sdf8234dfsdf==
+
+            expired:
+              type: string
+              format: date
+              description: Voucher expiration date.
+              example: 19 February 2027 
     InvalidRequestResponse:
       type: object
       properties:

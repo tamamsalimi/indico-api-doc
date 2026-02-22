@@ -1,0 +1,43 @@
+# 🔐 Voucher Encryption & Decryption
+
+The `voucher_code` field is **encrypted** before being sent in the payment callback payload.  
+This ensures the voucher remains secure during transmission and can only be read by authorized systems.
+
+---
+
+## 🔒 Encryption Specification
+
+| Item | Value |
+|------|------|
+| **Algorithm** | AES-256 |
+| **Mode** | CBC |
+| **Encryption Key** | SHA256(API Key) |
+| **Output Format** | Base64 encoded string |
+| **IV (Initialization Vector)** | Random, included in encrypted result |
+
+---
+
+## 🔁 Encryption & Decryption Flow
+
+1. The system encrypts the voucher using the merchant **API Key**.  
+2. The encrypted voucher is sent inside the callback payload.  
+3. The merchant backend decrypts the voucher using the **same API Key**.
+
+```
+Original Voucher → Encrypt (API Key) → Encrypted Voucher → Callback Sent
+→ Receive Callback → Decrypt (API Key) → Original Voucher
+```
+
+
+### voucher_code is encrypted and Base64 encoded.
+
+```
+⚠️ Important Security Notes
+🔑 Keep your API Key confidential and secure.
+🚫 Never decrypt voucher codes on frontend/client-side applications.
+🛡 Always verify the callback signature before decrypting the voucher.
+🔄 Encrypted values will differ each time due to random IV generation.
+🧾 Decryption must be performed only on trusted backend systems.
+```
+
+-----
